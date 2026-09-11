@@ -14,10 +14,9 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <div class="eyebrow">个人离线刷题</div>
+        <div class="eyebrow">申请律师执业实习人员 · 内置题库</div>
         <h1>我的刷题本</h1>
       </div>
-      <button id="openImport" class="ghost small">导入题库</button>
     </header>
 
     <section id="homeView" class="view active">
@@ -29,7 +28,7 @@
 
       <div class="panel">
         <h2>开始刷题</h2>
-        <p class="muted">只保留你需要的两种模式。</p>
+        <p class="muted">750 题已内置，打开即可使用。随机模式包含单选与多选。</p>
         <div class="actions">
           <button id="startRandom" class="primary">随机刷题</button>
           <button id="startWrong" class="secondary">只刷错题</button>
@@ -39,10 +38,10 @@
       <div class="panel compact">
         <div class="row between">
           <div>
-            <h3>数据管理</h3>
-            <p class="muted">题目和错题记录只保存在这台设备。</p>
+            <h3>答题记录</h3>
+            <p class="muted">错题记录只保存在当前设备。</p>
           </div>
-          <button id="resetProgress" class="danger-link">清空答题记录</button>
+          <button id="resetProgress" class="danger-link">清空记录</button>
         </div>
       </div>
     </section>
@@ -69,25 +68,7 @@
       </article>
     </section>
   </main>
-
-  <dialog id="importDialog">
-    <form method="dialog" class="dialog-card">
-      <div class="row between">
-        <h2>导入题库</h2>
-        <button value="cancel" class="ghost small">关闭</button>
-      </div>
-      <p>当前支持 <b>JSON</b> 和 <b>CSV</b>。你的 Word / PDF / Excel 可以发给我，我会替你转换成这个格式。</p>
-      <input id="fileInput" type="file" accept=".json,.csv,application/json,text/csv" />
-      <div class="import-help">
-        <details>
-          <summary>CSV 格式示例</summary>
-          <pre>id,type,question,A,B,C,D,answer\n1,single,中国的首都是？,北京,上海,广州,深圳,A\n2,multiple,哪些是偶数？,1,2,3,4,"B|D"</pre>
-        </details>
-      </div>
-      <div id="importStatus" class="muted"></div>
-    </form>
-  </dialog>
-
+  <script src="questions-data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
