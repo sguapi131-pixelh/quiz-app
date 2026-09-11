@@ -15,20 +15,24 @@
 
   async function decodeBuiltInQuestions() {
     if (!window.QUIZ_DATA_GZIP_B64) throw new Error("题库数据缺失");
-    if (!("DecompressionStream" in window)) throw new Error("浏览器版本过旧，请升级系统浏览器后重试");
     const bin = atob(window.QUIZ_DATA_GZIP_B64);
     const bytes = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-    const raw = JSON.parse(await new Response(stream).text());
-    const out = raw.map(([t, sourceNumber, question, optionTexts, answer, id]) => ({
-      id,
-      type: t === "m" ? "multiple" : "single",
-      sourceNumber,
-      question,
-      options: Object.fromEntries(optionTexts.map((text, i) => [labels[i], text])),
-      answer: String(answer).split("").filter(Boolean)
-    }));
+    let jsonText;
+    if ("DecompressionStream" in window) {
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+      jsonText = await new Response(stream).text();
+    } else if (window.pako && typeof window.pako.ungzip === "function") {
+      jsonText = window.pako.ungzip(bytes, { to: "string" });
+    } else {
+      throw new Error("当前浏览器不支持题库解压，请刷新后重试");
+    }
+    const raw = JSON.parse(jsonText);
+    const out = raw.map(([t, sourceNumber, question, optionTexts, answer, id]) => {
+      const options = {};
+      optionTexts.forEach((text, i) => { options[labels[i]] = text; });
+      return { id, type: t === "m" ? "multiple" : "single", sourceNumber, question, options, answer: String(answer).split("").filter(Boolean) };
+    });
     if (out.length !== 750) throw new Error(`题库数量异常：${out.length}`);
     return out;
   }
