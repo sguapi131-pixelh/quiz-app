@@ -52,7 +52,7 @@
     const active = all.filter(q => !EXCLUDED.has(`${q.type}:${String(q.sourceNumber)}`));
     const activeSingle = active.filter(q => q.type === "single").length;
     const activeMultiple = active.filter(q => q.type === "multiple").length;
-    if (active.length !== 724 || activeSingle !== 347 || activeMultiple !== 377) {
+    if (active.length !== 723 || activeSingle !== 346 || activeMultiple !== 377) {
       throw new Error(`异常题隔离后数量不符：总计 ${active.length}，单选 ${activeSingle}，多选 ${activeMultiple}`);
     }
     return active;
