@@ -1,4 +1,4 @@
-const CACHE = "quiz-pwa-v8-filtered";
+const CACHE = "quiz-pwa-v9-filtered";
 const ASSETS = [
   "./", "index.html", "styles.css", "manifest.json", "icon-192.png", "icon-512.png", "app-v3.js",
   "questions-1a.js", "questions-1b.js", "questions-2.js", "questions-3a.js", "questions-3b.js",
