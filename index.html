@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>我的刷题本</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">个人离线刷题</div>
+        <h1>我的刷题本</h1>
+      </div>
+      <button id="openImport" class="ghost small">导入题库</button>
+    </header>
+
+    <section id="homeView" class="view active">
+      <div class="stats-grid">
+        <div class="stat-card"><span>题库</span><strong id="statTotal">0</strong></div>
+        <div class="stat-card"><span>错题</span><strong id="statWrong">0</strong></div>
+        <div class="stat-card"><span>已掌握</span><strong id="statMastered">0</strong></div>
+      </div>
+
+      <div class="panel">
+        <h2>开始刷题</h2>
+        <p class="muted">只保留你需要的两种模式。</p>
+        <div class="actions">
+          <button id="startRandom" class="primary">随机刷题</button>
+          <button id="startWrong" class="secondary">只刷错题</button>
+        </div>
+      </div>
+
+      <div class="panel compact">
+        <div class="row between">
+          <div>
+            <h3>数据管理</h3>
+            <p class="muted">题目和错题记录只保存在这台设备。</p>
+          </div>
+          <button id="resetProgress" class="danger-link">清空答题记录</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="quizView" class="view">
+      <div class="row between quiz-head">
+        <button id="backHome" class="ghost small">返回</button>
+        <div id="modeLabel" class="pill"></div>
+        <div id="progressLabel" class="muted"></div>
+      </div>
+
+      <article class="question-card">
+        <div class="row between">
+          <span id="questionType" class="type-badge"></span>
+          <span id="wrongCount" class="wrong-count"></span>
+        </div>
+        <h2 id="questionText"></h2>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback hidden"></div>
+        <div class="question-actions">
+          <button id="submitAnswer" class="primary">提交答案</button>
+          <button id="nextQuestion" class="secondary hidden">下一题</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="importDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="row between">
+        <h2>导入题库</h2>
+        <button value="cancel" class="ghost small">关闭</button>
+      </div>
+      <p>当前支持 <b>JSON</b> 和 <b>CSV</b>。你的 Word / PDF / Excel 可以发给我，我会替你转换成这个格式。</p>
+      <input id="fileInput" type="file" accept=".json,.csv,application/json,text/csv" />
+      <div class="import-help">
+        <details>
+          <summary>CSV 格式示例</summary>
+          <pre>id,type,question,A,B,C,D,answer\n1,single,中国的首都是？,北京,上海,广州,深圳,A\n2,multiple,哪些是偶数？,1,2,3,4,"B|D"</pre>
+        </details>
+      </div>
+      <div id="importStatus" class="muted"></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
