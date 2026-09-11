@@ -1,26 +1,16 @@
 {
   "name": "我的刷题本",
   "short_name": "刷题本",
-  "start_url": "./",
+  "start_url": "./?v=6",
   "display": "standalone",
   "background_color": "#f6f7f9",
   "theme_color": "#ffffff",
   "lang": "zh-CN",
-  "description": "个人离线单选/多选随机刷题与错题本",
+  "description": "申请律师执业实习人员单选/多选随机刷题与错题本",
   "id": "./",
   "scope": "./",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
   ]
 }
