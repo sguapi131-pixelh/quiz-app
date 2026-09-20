@@ -1,6 +1,7 @@
 (() => {
   const LABELS = ["A", "B", "C", "D", "E", "F"];
   const PROGRESS_KEY = "quiz.progress.source-docx.v1";
+  const SESSION_KEY = "quiz.session.resume.v1";
   const EXCLUDED = new Set([
     "single:11", "single:98", "single:149", "single:199", "single:205", "single:232", "single:246",
     "multiple:41", "multiple:174", "multiple:199", "multiple:201", "multiple:203", "multiple:209",
@@ -63,6 +64,44 @@
     catch { return {}; }
   }
   function saveProgress() { localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); }
+
+  function clearSession() {
+    localStorage.removeItem(SESSION_KEY);
+  }
+
+  function saveSession() {
+    if (!session.mode || !Array.isArray(session.queue) || !session.queue.length || session.index < 0 || session.index >= session.queue.length) {
+      clearSession();
+      return;
+    }
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      mode: session.mode,
+      queueIds: session.queue.map(q => q.id),
+      index: session.index,
+      answered: Boolean(session.answered)
+    }));
+  }
+
+  function loadSession() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+      if (!saved || !["random", "wrong"].includes(saved.mode) || !Array.isArray(saved.queueIds)) return null;
+
+      const byId = new Map(questions.map(q => [q.id, q]));
+      const queue = saved.queueIds.map(id => byId.get(String(id))).filter(Boolean);
+      if (!queue.length) { clearSession(); return null; }
+
+      let index = Number.isInteger(saved.index) ? saved.index : 0;
+      if (saved.answered) index += 1;
+      if (index < 0 || index >= queue.length) { clearSession(); return null; }
+
+      return { mode: saved.mode, queue, index, answered: false };
+    } catch {
+      clearSession();
+      return null;
+    }
+  }
+
   function normalizeAnswer(a) { return [...new Set((Array.isArray(a) ? a : []).map(v => String(v).trim().toUpperCase()).filter(Boolean))].sort(); }
 
   function shuffle(items) {
@@ -104,11 +143,13 @@
   function renderQuestion() {
     const q = currentQuestion();
     if (!q) {
+      clearSession();
       alert("本轮完成。可以继续随机刷题，或进入错题模式。");
       showView("home");
       return;
     }
     session.answered = false;
+    saveSession();
     els.modeLabel.textContent = session.mode === "wrong" ? "错题模式" : "随机模式";
     els.progressLabel.textContent = `${session.index + 1} / ${session.queue.length}`;
     els.questionType.textContent = `${q.type === "multiple" ? "多选题" : "单选题"} · 原题 ${q.sourceNumber}`;
@@ -155,6 +196,7 @@
     progress[q.id] = rec;
     saveProgress();
     session.answered = true;
+    saveSession();
 
     [...els.options.querySelectorAll(".option")].forEach(label => {
       const key = label.dataset.key;
@@ -175,6 +217,8 @@
     if (!confirm("确定清空答题记录和错题记录吗？题库不会删除。")) return;
     progress = {};
     saveProgress();
+    clearSession();
+    session = { mode: null, queue: [], index: 0, answered: false };
     renderStats();
   }
 
@@ -195,7 +239,15 @@
       els.submitAnswer.addEventListener("click", submitAnswer);
       els.nextQuestion.addEventListener("click", nextQuestion);
       els.resetProgress.addEventListener("click", resetProgress);
-      renderStats();
+
+      const resumed = loadSession();
+      if (resumed) {
+        session = resumed;
+        showView("quiz");
+        renderQuestion();
+      } else {
+        renderStats();
+      }
     } catch (err) {
       document.body.innerHTML = `<main class="app-shell"><div class="panel"><h2>题库加载失败</h2><p>${String(err && err.message ? err.message : err)}</p></div></main>`;
     }
